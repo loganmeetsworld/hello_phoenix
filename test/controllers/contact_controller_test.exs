@@ -1,19 +1,22 @@
 defmodule HelloPhoenix.ContactControllerTest do
   use ExUnit.Case, async: false
-  use Plug.ContactControllerTest
+  use Plug.Test
   alias HelloPhoenix.Contact
   alias HelloPhoenix.Repo
   alias Ecto.Adapters.SQL
 
+  # Setup function warps our Ecto calls in a transaction that will ensure that
+  # our database is always empty when we start the tests.
   setup do
     SQL.begin_test_transaction(Repo)
 
     on_exit fn ->
       SQL.rollback_test_transaction(Repo)
+    end
   end
 
   test "/index returns list of contacts" do
-    contacts_as_json = 
+    contacts_as_json =
       %Contact{name: "Gumbo", phone: "(801) 555-5555"}
       |> Repo.insert
       |> List.wrap
